@@ -15,20 +15,15 @@ import java.beans.PropertyChangeListener;
 public class TimerPrint implements PropertyChangeListener {
 
    private TimeBean timeBean;
-   private long last;
 
    public TimerPrint() {
       this.timeBean = new TimeBean();
-      this.last = this.timeBean.getTime();
    }
 
    @Override
    public void propertyChange(PropertyChangeEvent evt) {
       long time = this.timeBean.getTime();
-      if ((time - this.last) > 1000) {
-         System.out.println("Time(ms) = " + time);
-         this.last = time;
-      }
+      System.out.println("Time(ms) = " + time);
    }
 
    public TimeBean getTimeBean() {
@@ -43,8 +38,17 @@ public class TimerPrint implements PropertyChangeListener {
 
       TimerPrint timerPrint = new TimerPrint();
       timerPrint.getTimeBean().addPropertyChangeListener(timerPrint);
+      long last = timerPrint.getTimeBean().getTime();
+
       while (true) {
-         timerPrint.getTimeBean().setTime(System.currentTimeMillis());
+
+         long time = System.currentTimeMillis();
+
+         if ((time - last) > 1000) {
+            timerPrint.getTimeBean().setTime(time);
+            last = time;
+         }
+
       }
 
    }
